@@ -26,6 +26,7 @@ const blogPostSchema = new mongoose.Schema({
     },
     tags: {
         type: [String],
+        default: [],
     },
     category: {
         type: String,
@@ -33,8 +34,12 @@ const blogPostSchema = new mongoose.Schema({
     },
     likes: {
         type: [String], // Array of usernames
+        default: [],
     },
-    comments: [commentSchema], // Embedded comments
+    comments: {
+        type: [commentSchema],
+        default: [],
+    },
     createdAt: {
         type: Date,
         default: Date.now,
@@ -46,7 +51,9 @@ const blogPostSchema = new mongoose.Schema({
 
 // Middleware to update `updatedAt` field
 blogPostSchema.pre('save', function (next) {
-    this.updatedAt = Date.now();
+    if (this.isModified()) {
+        this.updatedAt = Date.now();
+    }
     next();
 });
 
